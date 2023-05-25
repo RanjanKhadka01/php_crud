@@ -2,8 +2,8 @@
 include 'connect.php';
 
 //define variables and set to empty values
-$name = $email = $mobile = $password = "";
-$nameErr = $emailErr = $mobileErr = $passwordErr = "";
+$name = $email = $mobile = $password = $photo = "";
+$nameErr = $emailErr = $mobileErr = $passwordErr = $photoErr = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
   // Validate name field
@@ -41,10 +41,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = test_input($_POST['password']);
   }
 
-  if(empty($nameErr) && empty($emailErr) && empty($mobileErr) && empty($passwordErr)) {
+  if(empty($_POST['photo'])){
+    $photoErr = "Photo is required";
+  }else{
+    $photo = test_input($_FILES['photo']['name']);
+    $temp_image = test_input($_FILES['product_image']['temp_name']);
 
-    $sql = "insert into `user` (name, email, mobile, password)
-    values('$name', '$email', '$mobile', '$password')";
+    move_uploaded_file($temp_image, "/uploads/$photo");
+  }
+
+  if(empty($nameErr) && empty($emailErr) && empty($mobileErr) && empty($passwordErr) && empty($photoErr)) {
+
+    $sql = "insert into `user` (name, email, mobile, password, photos)
+    values('$name', '$email', '$mobile', '$password', '$photo')";
     $result = mysqli_query($con, $sql);
     if($result) {
         // echo "Data inserted successfully";
@@ -77,7 +86,7 @@ function test_input($data) {
   <body>
 
     <div class="container my-5">
-    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
+    <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" enctype="multipart/form-data">
 
   <div class="mb-3">
     <label>Name</label> 
@@ -99,8 +108,14 @@ function test_input($data) {
 
   <div class="mb-3">
     <label>Password</label>
-    <input type="text" class="form-control" placeholder="Enter Your Password" name="password" autocomplete="off">
+    <input type="password" class="form-control" placeholder="Enter Your Password" name="password" autocomplete="off">
     <span class="text-danger"><?php echo $passwordErr; ?></span>
+  </div>
+
+  <div class="mb-3">
+    <label>Photo</label>
+    <input type="file" class="form-control" name="photo" autocomplete="off">
+    <span class="file-danger text-danger"><?php echo $photoErr; ?></span>
   </div>
   
   <button type="submit" class="btn btn-primary" name="submit">Submit</button>
