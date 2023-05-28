@@ -32,6 +32,7 @@ include 'connect.php';
   
   $sql = "Select * from `user`";
   $result = mysqli_query($con, $sql);
+  $serialNumber = 1;
   if($result){
     while($row = mysqli_fetch_assoc($result)){
         $id = $row['id'];
@@ -40,7 +41,7 @@ include 'connect.php';
         $mobile = $row['mobile'];
         $password = $row['password'];
         echo '<tr>
-        <th scope="row">'.$id.'</th>
+        <th scope="row">'.$serialNumber.'</th>
         <td>'.$name.'</td>
         <td>'.$email.'</td>
         <td>'.$mobile.'</td>
@@ -50,6 +51,7 @@ include 'connect.php';
     <button class="btn btn-danger"><a href="delete.php?deleteid='.$id.'" class="text-light">Delete</a></button>
 </td>
       </tr>';
+      $serialNumber++;
     }
     
   }

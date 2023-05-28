@@ -1,4 +1,9 @@
 <?php
+
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+
 include 'connect.php';
 
 //define variables and set to empty values
@@ -41,19 +46,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = test_input($_POST['password']);
   }
 
-  if(empty($_POST['photo'])){
+  if(empty($_FILES['photo']['name'])){
     $photoErr = "Photo is required";
   }else{
-    $photo = test_input($_FILES['photo']['name']);
-    $temp_image = test_input($_FILES['product_image']['temp_name']);
+    $photo =$_FILES['photo']['name'];
+    $temp_image = $_FILES['photo']['temp_name'];
+    $target_directory = "uploads/";
+    $target_file = $target_directory . basename($photo);
 
-    move_uploaded_file($temp_image, "/uploads/$photo");
+    if (move_uploaded_file($temp_image, $target_file)){
+      echo "File uploaded successfully";
+    }else {
+      $photoErr = "Error uploading photo";
+    }
   }
 
   if(empty($nameErr) && empty($emailErr) && empty($mobileErr) && empty($passwordErr) && empty($photoErr)) {
 
     $sql = "insert into `user` (name, email, mobile, password, photos)
-    values('$name', '$email', '$mobile', '$password', '$photo')";
+    values('$name', '$email', '$mobile', '$password'), '$photo' ";
     $result = mysqli_query($con, $sql);
     if($result) {
         // echo "Data inserted successfully";
