@@ -50,7 +50,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $photoErr = "Photo is required";
   }else{
     $photo =$_FILES['photo']['name'];
-    $temp_image = $_FILES['photo']['temp_name'];
+    $temp_image = $_FILES['photo']['tmp_name'];
     $target_directory = "uploads/";
     $target_file = $target_directory . basename($photo);
 
@@ -64,7 +64,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if(empty($nameErr) && empty($emailErr) && empty($mobileErr) && empty($passwordErr) && empty($photoErr)) {
 
     $sql = "insert into `user` (name, email, mobile, password, photos)
-    values('$name', '$email', '$mobile', '$password'), '$photo' ";
+    values('$name', '$email', '$mobile', '$password', '$photo')";
     $result = mysqli_query($con, $sql);
     if($result) {
         // echo "Data inserted successfully";
